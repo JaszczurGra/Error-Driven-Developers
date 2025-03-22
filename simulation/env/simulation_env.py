@@ -121,18 +121,18 @@ if __name__ == "__main__":
 
     # Save results to CSV files
     SIMULATION_STORAGE.update_all(agent, sim.time_labels)
-    save_results_to_csv(agent, sim.time_labels, results_dir, formatted_date)
+    # save_results_to_csv(agent, sim.time_labels, results_dir, formatted_date)
 
     # Save logs to a text file
-    log_dir = Path(sys.argv[3])
-    log_dir.mkdir(parents=True, exist_ok=True)
+    # log_dir = Path(sys.argv[3])
+    # log_dir.mkdir(parents=True, exist_ok=True)
 
-    agent.save_logs(str(log_dir / f'simulation_{formatted_date}.log'))
+    # agent.save_logs(str(log_dir / f'simulation_{formatted_date}.log'))
 
-    labels = sim.time_labels
+    # labels = sim.time_labels
 
-    agent.plot_results = plot_results.__get__(agent)
-    agent.plot_results(len(sim.hourly_data), labels, results_dir, formatted_date)
+    # agent.plot_results = plot_results.__get__(agent)
+    # agent.plot_results(len(sim.hourly_data), labels, results_dir, formatted_date)
     import time
     time.sleep(10)
     server.stop()
