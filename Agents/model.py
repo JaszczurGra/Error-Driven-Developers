@@ -1,14 +1,7 @@
 # Imports
-from uagents import Agent, Context, Model
+from uagents import Agent, Context
 
-from simulation_compat_layer import QueryEnv
-
-
-class ResponseAgent(Model):
-    frame = 0 
-    sell = 0
-    store = 0
-    buy = 0
+from data_models import QueryEnv, ResponseAgent
 
 
 class ModelAgent():
@@ -16,7 +9,7 @@ class ModelAgent():
         agent = Agent(seed="khavaioghgjabougrvbosubvisgvgjfkf", **agent_kwargs)
         agent.storage.set("frame",0)
 
-        async def logic(input: QueryEnv) -> ResponseAgent:
+        def logic(input: QueryEnv) -> ResponseAgent:
             return ResponseAgent(sell=0, store=0, buy=0)
 
         agent.logic = logic
