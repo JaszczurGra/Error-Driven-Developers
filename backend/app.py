@@ -47,12 +47,15 @@ def api_get_actions():
     Retrieves all data from simulation.
     """
     fields = [
-    "token_balance",
-    "battery_charged",
-    "battery_discharged",
-    "battery_state",
-    "bought",
-    "sold"
+        "token_balance",
+        "battery_charged",
+        "battery_discharged",
+        "grid_price",
+        "purchase_price",
+        "battery_state",
+        "bought",
+        "sold",
+        "time",
     ]
 
     length = len(SIMULATION_STORAGE.time)

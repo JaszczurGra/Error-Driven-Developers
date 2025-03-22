@@ -5,7 +5,7 @@ import Toolbar from './components/Toolbar';
 import { Box } from '@mui/material';
 import Overview from './components/Overview';
 import Grid from './components/Grid';
-import actions_data from "./const/actions_data.json";
+// import actions_data from "./const/actions_data.json";
 import { useEffect, useState } from 'react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -20,6 +20,7 @@ function App() {
   const [dataset, setDataset] = useState([]);
   const [actions, setActions] = useState([]);
   const [simulationData, setSimulationData] = useState([]);
+  const [actionsData, setActionsData] = useState([]);
   const [isSimulating, setIsSimulating] = useState(true);
 
   useEffect(() => {
@@ -37,8 +38,43 @@ function App() {
   }, []);
 
   useEffect(() => {
+    async function fetchActionsData() {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/actions`);
+        const data = await response.json();
+        setActionsData(data);
+      } catch (error) {
+        console.error("Error fetching actions data:", error);
+      }
+    }
+
+    fetchActionsData();
+  }, []);
+
+  const preprocessActionsData = (data) => {
+    let result = [];
+    if (data.bought !== 0) {
+      result.push({
+        action: 'Buy',
+        quantity: data.bought,
+        price: data.purchase_price,
+        time: data.time,
+      });
+    }
+    if (data.sold !== 0) {
+      result.push({
+        action: 'Sell',
+        quantity: data.sold,
+        price: data.grid_price,
+        time: data.time,
+      });
+    }
+    return result
+  }
+
+  useEffect(() => {
     let interval;
-    if (isSimulating && simulationData) {
+    if (isSimulating && simulationData && actionsData) {
       interval = setInterval(() => {
         setDataset(prevData => {
           const newIndex = prevData.length + 1;
@@ -46,17 +82,15 @@ function App() {
             return prevData;
           }
           const newData = simulationData[newIndex];
-          const newActions = actions_data.filter(action => action.time === newData.time);
-          if (newActions.length > 0) {
-            setActions(prevActions => {
-              const uniqueActions = newActions.filter(newAction => 
-                !prevActions.some(prevAction => 
-                  prevAction.time === newAction.time && prevAction.action === newAction.action
-                )
-              );
-              return [...uniqueActions, ...prevActions];
-            });
-          }
+          const newActions = preprocessActionsData(actionsData.filter(action => action.time === newData.time)[0]);
+          setActions(prevActions => {
+            const uniqueActions = newActions.filter(newAction => 
+              !prevActions.some(prevAction => 
+                prevAction.time === newAction.time && prevAction.action === newAction.action
+              )
+            );
+            return [...uniqueActions, ...prevActions];
+          });
           return [
             ...prevData,
             newData
@@ -66,7 +100,7 @@ function App() {
     }
 
     return () => clearInterval(interval);
-  }, [isSimulating, simulationData]);
+  }, [isSimulating, simulationData, actionsData]);
 
   const swapIsSimulation = () => setIsSimulating(() => !isSimulating);
   const resetSimulation = () => {
@@ -133,14 +167,14 @@ function App() {
               dataset = {dataset}
           />
           <Graph 
-              series = {Object.keys(dataset[0] || {})
-                .filter(key => key.startsWith('storage_level'))
-                .map(key => ({
-                  id: key.replace(/_/g, ' ').replace(/\b\w/g, char => char.toUpperCase()),
-                  label: key.replace(/_/g, ' ').replace(/\b\w/g, char => char.toUpperCase()),
-                  dataKey: key,
+              series = {[
+                {
+                  id: 'Storage',
+                  label: 'Storage',
+                  dataKey: 'battery_state',
                   showMark: false,
-                }))}
+                },
+              ]}
               dataset = {dataset}
           />
         </Box>
