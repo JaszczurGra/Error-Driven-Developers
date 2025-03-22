@@ -5,25 +5,39 @@ import Toolbar from './components/Toolbar';
 import { Box } from '@mui/material';
 import Overview from './components/Overview';
 import Grid from './components/Grid';
-import simulation_data from "./const/simulation_data.json";
 import actions_data from "./const/actions_data.json";
-import { use, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 function App() {
   const [dataset, setDataset] = useState([]);
   const [actions, setActions] = useState([]);
+  const [simulationData, setSimulationData] = useState([]);
   const [isSimulating, setIsSimulating] = useState(true);
 
   useEffect(() => {
+    async function fetchSimulationData() {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/simulation`);
+        const data = await response.json();
+        setSimulationData(data);
+      } catch (error) {
+        console.error("Error fetching simulation data:", error);
+      }
+    }
+
+    fetchSimulationData();
+  }, []);
+
+  useEffect(() => {
     let interval;
-    if (isSimulating) {
+    if (isSimulating && simulationData) {
       interval = setInterval(() => {
         setDataset(prevData => {
           const newIndex = prevData.length + 1;
-          if (newIndex >= simulation_data.length) {
+          if (newIndex >= simulationData.length) {
             return prevData;
           }
-          const newData = simulation_data[newIndex];
+          const newData = simulationData[newIndex];
           const newActions = actions_data.filter(action => action.time === newData.Time);
           if (newActions.length > 0) {
             setActions(prevActions => {
@@ -44,7 +58,7 @@ function App() {
     }
 
     return () => clearInterval(interval);
-  }, [isSimulating, simulation_data]);
+  }, [isSimulating, simulationData]);
 
   const swapIsSimulation = () => setIsSimulating(() => !isSimulating);
   const resetSimulation = () => {
