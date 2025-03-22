@@ -19,11 +19,13 @@ def api_get_stock_price():
     """
 
     fields = [
+        "token_balance",
         "total_consumption",
         "total_production",
         "time",
         "grid_price",
         "purchase_price",
+        "battery_state",
         "p2p_price",
         "token_mint_rate",
         "token_burn_rate"
