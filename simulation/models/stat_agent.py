@@ -9,7 +9,7 @@ from darts.models import Prophet
 from typing import Literal
 import numpy as np
 import pandas as pd
-        
+
 
 class StatAgent(AIAgent):
     def __init__(self, config, initial_token_balance, *args, steps_per_day=24, **kwargs) -> None:
@@ -28,6 +28,8 @@ class StatAgent(AIAgent):
         self.tokens_history = []
         self.energy_history = []
         self.surplus_history = []
+        self.sells_history = []
+        self.buys_history = []
 
         super().__init__(config, initial_token_balance, *args, **kwargs)
 
@@ -96,9 +98,17 @@ class StatAgent(AIAgent):
         return amount
 
     def _sell_to_grid(self, amount, sell_price, mint_rate):
+        if len(self.sells_history) <= self._steps:
+            self.sells_history.append(amount)
+        else:
+            self.sells_history[self._steps] += amount
         self.token_balances['community'] += amount * sell_price
 
     def _buy_from_grid(self, amount, grid_price, burn_rate):
+        if len(self.buys_history) <= self._steps:
+            self.buys_history.append(amount)
+        else:
+            self.buys_history[self._steps] += amount
         self.token_balances['community'] -= amount * burn_rate
         self.token_balances['community'] -= amount * grid_price
 
