@@ -1,23 +1,22 @@
 """ Storage of simulation data """
-import random
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import pandas as pd
 
 
 @dataclass
 class Storage:
     """ Storage for data """
-    time: list = []
-    total_consumption: list[float] = []
-    total_production: list[float] = []
-    token_balance: list[float] = []
-    p2p_price: list[float] = []
-    grid_price: list[float] = []
-    purchase_price: list[float] = []
-    energy_deficit: list[float] = []
-    energy_surplus: list[float] = []
-    storage_level_s1: list[float] = []
-    storage_level_s2: list[float] = []
+    time: list = field(default_factory=list)
+    total_consumption: list[float] = field(default_factory=list)
+    total_production: list[float] = field(default_factory=list)
+    token_balance: list[float] = field(default_factory=list)
+    p2p_price: list[float] = field(default_factory=list)
+    grid_price: list[float] = field(default_factory=list)
+    purchase_price: list[float] = field(default_factory=list)
+    energy_deficit: list[float] = field(default_factory=list)
+    energy_surplus: list[float] = field(default_factory=list)
+    storage_level_s1: list[float] = field(default_factory=list)
+    storage_level_s2: list[float] = field(default_factory=list)
 
     @classmethod
     def from_csv(cls, path: str) -> "Storage":
@@ -26,19 +25,19 @@ class Storage:
         values = zip(*data_frame.values.tolist())
         return cls(*values)
 
-    def update_all(self, cooperative, time):
+    def update_all(self, agent, time):
         """ Updates all values """
         self.time = time
-        self.total_consumption = cooperative.history_consumption
-        self.total_production = cooperative.history_production
-        self.token_balance = cooperative.history_token_balance
-        self.p2p_price = cooperative.history_p2p_price
-        self.grid_price = cooperative.history_grid_price
-        self.purchase_price = cooperative.history_purchase_price
-        self.energy_deficit = cooperative.history_energy_deficit
-        self.energy_surplus = cooperative.history_energy_surplus
+        self.total_consumption = agent.history_consumption
+        self.total_production = agent.history_production
+        self.token_balance = agent.history_token_balance
+        self.p2p_price = agent.history_p2p_price
+        self.grid_price = agent.history_grid_price
+        self.purchase_price = agent.history_purchase_price
+        self.energy_deficit = agent.history_energy_deficit
+        self.energy_surplus = agent.history_energy_surplus
         levels = []
-        for _, storage_levels in cooperative.history_storage.items():
+        for _, storage_levels in agent.history_storage.items():
             levels.append(storage_levels)
         self.storage_level_s1 = levels[0]
         self.storage_level_s2 = levels[1]
