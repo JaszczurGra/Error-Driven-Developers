@@ -16,7 +16,8 @@ class ModelStatAgent(ModelAgent):
 
     def logic(self, input: QueryEnv) -> ResponseAgent:
 
-        self.model.step(input.consumption, input.production, input.grid_price, input.sale_price, input.p2p_base_price, input.min_price, input.token_mint_rate, input.token_burn_rate)
+
+        self.model.step(input.consumption, input.production,input.date, input.grid_price, input.sale_price, input.p2p_base_price, input.min_price, input.token_mint_rate, input.token_burn_rate)
 
         res = ResponseAgent()
 

@@ -10,13 +10,15 @@ from agents.simulation_compat_layer import EnvAgent
 
 from backend.storage import SIMULATION_STORAGE
 from backend.app import Server
-from pydantic import BaseModel
+
+
+run_server = False
 class Environment():
     """ Environment """
 
     def __init__(self) -> None:
 
-        if False:
+        if run_server:
             self.server = Server()
             self.server.start()
 
@@ -85,4 +87,5 @@ class Environment():
 if __name__ == "__main__":
     env = Environment()
     env.run()
-    env.server.stop()
+    if run_server:
+        env.server.stop()
