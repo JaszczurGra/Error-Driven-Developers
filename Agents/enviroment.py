@@ -1,20 +1,26 @@
 # Imports
 from uagents import Agent, Context, Bureau
 
-from data_models import QueryEnv, ResponseAgent
-from model import ModelAgent
+from agents.data_models import QueryEnv, ResponseAgent
+from agents.model import ModelAgent
 
-from simulation_compat_layer import EnvAgent
+from agents.simulation_compat_layer import EnvAgent
+
+
+from backend.storage import SIMULATION_STORAGE
 
 
 class Environment():
     """ Environment """
 
     def __init__(self) -> None:
+        self.storage = SIMULATION_STORAGE
+
+
         self.environment = Agent(name='Environment', seed="khavaioghgjabougrvbosubvisgvgjfkf",
                                  endpoint="https://localhost:4443")
         self.environment.storage.set("frame_counter", [0])
-        self.environment.storage.set("current_frame", 0)
+        self.environment.storage.set('state', [])
         self.agents: list[Agent] = [ModelAgent(agent_kwargs={'name': f'Agent_{i}'}).agent for i in range(3)]
         self.simulation = EnvAgent().agent
         self.simulation.endpoint = self.environment.address
@@ -27,8 +33,12 @@ class Environment():
         @self.environment.on_message(QueryEnv)
         async def receive_simulation(ctx: Context, _sender, message: QueryEnv):
             # for a in self.agents:
-            # ctx.send(a.address, message)
-            return
+            #     await ctx.send(a.address, message)
+            
+            #Update storage
+            
+            pass
+            
 
         @self.environment.on_message(ResponseAgent)
         async def receive_agent(ctx: Context, _sender, message):

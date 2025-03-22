@@ -1,7 +1,7 @@
 # Imports
 from uagents import Agent, Context
 
-from data_models import QueryEnv, ResponseAgent
+from agents.data_models import QueryEnv, ResponseAgent
 
 
 class ModelAgent():

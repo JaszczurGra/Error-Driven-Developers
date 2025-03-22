@@ -1,6 +1,6 @@
 # Imports
 from uagents import Agent, Context
-from data_models import QueryEnv
+from agents.data_models import QueryEnv
 
 
 class EnvAgent():
