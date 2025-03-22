@@ -98,17 +98,11 @@ class StatAgent(AIAgent):
         return amount
 
     def _sell_to_grid(self, amount, sell_price, mint_rate):
-        if len(self.sells_history) <= self._steps:
-            self.sells_history.append(amount)
-        else:
-            self.sells_history[self._steps] += amount
+        self.sells_history[self._steps] += amount
         self.token_balances['community'] += amount * sell_price
 
     def _buy_from_grid(self, amount, grid_price, burn_rate):
-        if len(self.buys_history) <= self._steps:
-            self.buys_history.append(amount)
-        else:
-            self.buys_history[self._steps] += amount
+        self.buys_history[self._steps] += amount
         self.token_balances['community'] -= amount * burn_rate
         self.token_balances['community'] -= amount * grid_price
 
@@ -116,6 +110,8 @@ class StatAgent(AIAgent):
         return self.token_balances['community']/grid_price
 
     def step(self, consumption, production, date, grid_price, sell_price, p2p_base_price, min_price, mint_rate, burn_rate):
+        self.sells_history.append(0)
+        self.buys_history.append(0)
         self._register_grid_prices(grid_price, sell_price)
         self._register_consumption_production(consumption, production)
         self.dates.append(date)
