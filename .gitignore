@@ -1,2 +1,6 @@
 *__pycache__*
 *.pyc
+results/
+*.png
+*.log
+model_training.ipynb
