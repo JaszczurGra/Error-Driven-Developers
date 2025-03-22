@@ -51,6 +51,10 @@ class Cooperative:
 
         # Update storage level
         if net_energy > 0:
+            if consumption > 0:
+                # Mint tokens for the community - using renevable energy
+                minted_tokens = consumption * token_mint_rate
+                self.community_token_balance += minted_tokens
             for storage in self.storages:
                 charged_energy = storage.charge(net_energy)
                 net_energy -= charged_energy
@@ -62,18 +66,22 @@ class Cooperative:
                     break
             if net_energy > 0:
                 energy_surplus = net_energy
-                for storage in self.storages:
-                    if storage.current_level >= net_energy:
-                        storage.discharge(net_energy)
-                        minted_tokens = net_energy * token_mint_rate
-                        self.community_token_balance += minted_tokens
-                        break
+                # for storage in self.storages:
+                #    if storage.current_level >= net_energy:
+                #        storage.discharge(net_energy)
+                #        minted_tokens = net_energy * token_mint_rate
+                #        self.community_token_balance += minted_tokens
+                #        break
                 # Sell surplus energy to the grid
                 energy_sold_to_grid = energy_surplus
                 tokens_gained_from_grid = energy_sold_to_grid * sale_price
                 self.community_token_balance += tokens_gained_from_grid
 
         elif net_energy < 0:
+            if consumption > 0:
+                # Mint tokens for the community based on the consumption of renevable energy
+                minted_tokens = (consumption - production) * token_mint_rate
+                self.community_token_balance += minted_tokens
             for storage in self.storages:
                 discharged_energy = storage.discharge(-net_energy)
                 net_energy += discharged_energy
@@ -134,7 +142,6 @@ class Cooperative:
         self.history_energy_surplus.append(energy_surplus)
         self.history_energy_sold_to_grid.append(energy_sold_to_grid)
         self.history_tokens_gained_from_grid.append(tokens_gained_from_grid)
-
     # def simulate(self, steps, p2p_base_price, grid_price, min_price, token_mint_rate, token_burn_rate, hourly_data):
     #    for step in range(steps):
     #        self.simulate_step(step, p2p_base_price, grid_price, min_price, token_mint_rate, token_burn_rate, hourly_data)

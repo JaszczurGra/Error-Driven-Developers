@@ -22,5 +22,5 @@ class AIAgent(ABC):
         min_price,
         mint_rate,
         burn_rate,
-    ) -> float:
+    ):
         pass

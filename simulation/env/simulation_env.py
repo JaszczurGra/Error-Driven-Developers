@@ -3,8 +3,9 @@ import csv
 from datetime import datetime
 from pathlib import Path
 
-from simulation.utils.helper_functions import plot_results, save_results_to_csv, load_profiles, load_storages
+from simulation.utils.helper_functions import load_profiles, load_storages, save_results_to_csv, plot_results
 from simulation.models.cooperative import Cooperative
+
 from backend.storage import SIMULATION_STORAGE
 from backend.app import Server
 
@@ -62,7 +63,7 @@ class SimEnv:
     def _calc_reward(self, agent):
         return 1
 
-    def step(self, agent, action) -> tuple[list, float, bool]:
+    def step(self) -> tuple[list, bool]:
         hour_data = self.hourly_data[self._step_count]
         consumption = hour_data['consumption']
         production = hour_data['production']
@@ -73,20 +74,17 @@ class SimEnv:
 
         self._step_count += 1
 
-        return ([
-                consumption,
-                production,
-                date,
-                grid_price,
-                sale_price,
-                self.p2p_base_price,
-                self.min_price,
-                self.token_mint_rate,
-                self.token_burn_rate
-                ],
-                self._calc_reward(agent),
-                self._step_count >= self.max_steps
-                )
+        return [
+            consumption,
+            production,
+            date,
+            grid_price,
+            sale_price,
+            self.p2p_base_price,
+            self.min_price,
+            self.token_mint_rate,
+            self.token_burn_rate
+        ], self._step_count >= self.max_steps
 
 
 if __name__ == "__main__":
@@ -109,7 +107,7 @@ if __name__ == "__main__":
 
     done = False
     while not done:
-        space, reward, done = sim.step(agent, 0)
+        space, done = sim.step()
         agent.simulate_step(*space)
 
     results_dir = Path("results")
@@ -119,20 +117,18 @@ if __name__ == "__main__":
 
     # Save results to CSV files
     SIMULATION_STORAGE.update_all(agent, sim.time_labels)
-    # save_results_to_csv(agent, sim.time_labels, results_dir, formatted_date)
+    save_results_to_csv(agent, sim.time_labels, results_dir, formatted_date)
 
     # Save logs to a text file
-    # log_dir = Path(sys.argv[3])
-    # log_dir.mkdir(parents=True, exist_ok=True)
+    log_dir = Path(sys.argv[3])
+    log_dir.mkdir(parents=True, exist_ok=True)
 
-    # agent.save_logs(str(log_dir / f'simulation_{formatted_date}.log'))
+    agent.save_logs(str(log_dir / f'simulation_{formatted_date}.log'))
 
-    # Generate labels for the X-axis
-    # labels = sim.time_labels
+    labels = sim.time_labels
 
-    # Assign the modified method to the agent object
-    # agent.plot_results = plot_results.__get__(agent)
-    # agent.plot_results(len(sim.hourly_data), labels, results_dir, formatted_date)
+    agent.plot_results = plot_results.__get__(agent)
+    agent.plot_results(len(sim.hourly_data), labels, results_dir, formatted_date)
     import time
     time.sleep(10)
     server.stop()
