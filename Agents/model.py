@@ -21,4 +21,4 @@ class ModelAgent():
         async def logic(input: QueryEnv) -> ResponseAgent:
             await ResponseAgent(sell=0, store=0, buy=0)
 
-        self.agent = Agent
+        self.agent = agent
