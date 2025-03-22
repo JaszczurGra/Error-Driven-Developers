@@ -4,24 +4,24 @@ from uagents import Agent, Context,Model
 from simulation_compat_layer import QueryEnv
 
 class ResponseAgent(Model):
-    produced = 0
-    consumed = 0
-    pass    
-
-class QueryAgent(Model):
     sell = 0
     store  =0 
     buy = 0
+
+# class QueryAgent(Model):
+#     produced = 0
+#     consumed = 0
 
 
 
 
 class ModelAgent():
-    agent = Agent(seed="khavaioghgjabougrvbosubvisgvgjfkf",endpoint="None")
+    agent = Agent(seed="khavaioghgjabougrvbosubvisgvgjfkf")
 
-    @agent.on_message(messages=QueryEnv)
+    @agent.on_message(QueryEnv,replies=ResponseAgent)
     async def recieve_enviroment(ctx: Context, _sender, message: QueryEnv):
-        await ctx.send(ctx.agent.address,QueryEnv(bought=0,sold=0,storage=[0,0],price=[0,0]))
+        #LOGIKA MODELU
+        await ctx.send(_sender,ResponseAgent(sell=0,store=0,buy=0))
 
 
 

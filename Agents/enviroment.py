@@ -3,7 +3,8 @@ from uagents import Agent, Context, Bureau, Model
 import json
 from typing import List
 
-from model import ResponseAgent, QueryAgent
+from model import ResponseAgent,ModelAgent
+
 
 from simulation_compat_layer import QueryEnv, EnvAgent
 
@@ -11,7 +12,9 @@ enviroment = Agent(seed="khavaioghgjabougrvbosubvisgvgjfkf", endpoint="https://l
 
 
 # List of agents 
-agents: List[Agent] = []
+agents: List[Agent] = [ModelAgent().agent]
+
+
 
 
 simulation = EnvAgent().agent
@@ -45,8 +48,11 @@ async def receive_simulation(ctx: Context,_sender, message: QueryEnv):
 
 
 
-@enviroment.on_message(QueryAgent)
-async def receive_agent(ctx: Context, message):
+@enviroment.on_message(ResponseAgent)
+async def receive_agent(ctx: Context,_sender, message):
+
+    print(ResponseAgent)
+    return
     ctx.storage.set('')
 
 
