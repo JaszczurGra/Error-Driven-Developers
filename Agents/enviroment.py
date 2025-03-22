@@ -1,11 +1,10 @@
 # Imports
-import time
-
 from uagents import Agent, Context, Bureau
 
-from model import ResponseAgent, ModelAgent
+from data_models import QueryEnv, ResponseAgent
+from model import ModelAgent
 
-from simulation_compat_layer import QueryEnv, EnvAgent
+from simulation_compat_layer import EnvAgent
 
 
 class Environment():
@@ -25,8 +24,8 @@ class Environment():
 
         @self.environment.on_message(QueryEnv)
         async def receive_simulation(ctx: Context, _sender, message: QueryEnv):
-            for a in self.agents:
-                ctx.send(a.address, message)
+            # for a in self.agents:
+            # ctx.send(a.address, message)
             return
 
         @self.environment.on_message(ResponseAgent)
