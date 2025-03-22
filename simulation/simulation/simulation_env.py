@@ -115,7 +115,7 @@ if __name__ == "__main__":
     formatted_date = now.strftime("%Y-%m-%d_%H:%M:%S")
 
     # Save results to CSV files
-    SIMULATION_STORAGE
+    SIMULATION_STORAGE.update_all(agent, sim.time_labels)
     save_results_to_csv(agent, sim.time_labels, results_dir, formatted_date)
 
     # Save logs to a text file
