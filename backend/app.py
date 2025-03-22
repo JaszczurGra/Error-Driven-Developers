@@ -17,18 +17,45 @@ def api_get_stock_price():
     """
     Retrieves all data from simulation.
     """
+
+    fields = [
+        "total_consumption",
+        "total_production",
+        "time",
+        "grid_price",
+        "purchase_price",
+        "p2p_price",
+        "token_mint_rate",
+        "token_burn_rate"
+    ]
+
     length = len(SIMULATION_STORAGE.time)
-    return flask.jsonify([{key: value[i] for key, value in SIMULATION_STORAGE.__dict__.items()} for i in range(length)]), 200
+
+
+
+
+
+    return flask.jsonify([{key: value[i]  for key, value in SIMULATION_STORAGE.__dict__.items() if key in fields } for i in range(length)]), 200
+
+
 
 @APP.route('/api/actions', methods=['GET'])
-def api_get_actions ():
+def api_get_actions():
     """
     Retrieves all data from simulation.
     """
+    fields = [
+    "token_balance",
+    "battery_charged",
+    "battery_discharged",
+    "battery_state",
+    "bought",
+    "sold"
+    ]
+
     length = len(SIMULATION_STORAGE.time)
-    return flask.jsonify([{key: value[i] for key, value in SIMULATION_STORAGE.__dict__.items()} for i in range(length)]), 200
-
-
+    return flask.jsonify([{key: value[i]  for key, value in SIMULATION_STORAGE.__dict__.items() if key in fields } for i in range(length)]), 200
+    
 class Server():
     """ Server class """
     port: int
