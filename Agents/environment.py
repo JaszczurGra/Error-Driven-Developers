@@ -9,8 +9,6 @@ from agents.simulation_compat_layer import EnvAgent
 
 from backend.storage import SIMULATION_STORAGE
 
-from pydantic import BaseModel
-
 
 class Environment():
     """ Environment """
