@@ -63,7 +63,7 @@ class StatAgent(AIAgent):
             return data[-1]
         series = TimeSeries.from_times_and_values(pd.to_datetime(self.dates), np.array(data))
         model.fit(series)
-        return model.predict(n=1).values()[0]
+        return model.predict(n=1).values()[0][0]
 
     def _predict_consumption_production(self, tod):
         return self._predict("consumption"), self._predict("production")
