@@ -1,10 +1,12 @@
-from simulation.utils.helper_functions import plot_results, save_results_to_csv, load_profiles, load_storages
-from simulation.models.cooperative import Cooperative
-
 import sys
 import csv
 from datetime import datetime
 from pathlib import Path
+
+from simulation.utils.helper_functions import plot_results, save_results_to_csv, load_profiles, load_storages
+from simulation.models.cooperative import Cooperative
+from backend.storage import SIMULATION_STORAGE
+from backend.app import Server
 
 
 def load_grid_costs(filepath):
@@ -100,6 +102,8 @@ if __name__ == "__main__":
     if len(sys.argv) < 4:
         print("No required parameter: grid costs file path")
         sys.exit(1)
+    server = Server()
+    server.start()
     sim = SimEnv(*sys.argv[1:])
     agent = Cooperative({'storages': load_storages(sim.storage_fp)}, 100)
 
@@ -114,18 +118,21 @@ if __name__ == "__main__":
     formatted_date = now.strftime("%Y-%m-%d_%H:%M:%S")
 
     # Save results to CSV files
-    save_results_to_csv(agent, sim.time_labels, results_dir, formatted_date)
+    SIMULATION_STORAGE.update_all(agent, sim.time_labels)
+    # save_results_to_csv(agent, sim.time_labels, results_dir, formatted_date)
 
     # Save logs to a text file
-    log_dir = Path(sys.argv[3])
-    log_dir.mkdir(parents=True, exist_ok=True)
+    # log_dir = Path(sys.argv[3])
+    # log_dir.mkdir(parents=True, exist_ok=True)
 
-    agent.save_logs(str(log_dir / f'simulation_{formatted_date}.log'))
+    # agent.save_logs(str(log_dir / f'simulation_{formatted_date}.log'))
 
     # Generate labels for the X-axis
-    labels = sim.time_labels
+    # labels = sim.time_labels
 
     # Assign the modified method to the agent object
-    agent.plot_results = plot_results.__get__(agent)
-
-    agent.plot_results(len(sim.hourly_data), labels, results_dir, formatted_date)
+    # agent.plot_results = plot_results.__get__(agent)
+    # agent.plot_results(len(sim.hourly_data), labels, results_dir, formatted_date)
+    import time
+    time.sleep(10)
+    server.stop()
