@@ -1,7 +1,5 @@
-from backend.storage import BStorage
+from backend.storage import Storage
 
 
 def test_backend():
-
-    storage = BStorage.from_csv('example_data.csv')
-    storage
+    Storage.from_csv('example_data.csv')

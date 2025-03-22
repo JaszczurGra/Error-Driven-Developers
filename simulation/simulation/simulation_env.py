@@ -1,10 +1,11 @@
-from simulation.utils.helper_functions import plot_results, save_results_to_csv, load_profiles, load_storages
-from simulation.models.cooperative import Cooperative
-
 import sys
 import csv
 from datetime import datetime
 from pathlib import Path
+
+from simulation.utils.helper_functions import plot_results, save_results_to_csv, load_profiles, load_storages
+from simulation.models.cooperative import Cooperative
+from backend.storage import SIMULATION_STORAGE
 
 
 def load_grid_costs(filepath):
@@ -114,6 +115,7 @@ if __name__ == "__main__":
     formatted_date = now.strftime("%Y-%m-%d_%H:%M:%S")
 
     # Save results to CSV files
+    SIMULATION_STORAGE
     save_results_to_csv(agent, sim.time_labels, results_dir, formatted_date)
 
     # Save logs to a text file
