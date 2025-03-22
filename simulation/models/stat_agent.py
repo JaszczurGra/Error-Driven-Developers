@@ -3,7 +3,13 @@ import numpy as np
 
 import seaborn as sns
 import matplotlib.pyplot as plt
-
+""" Class for helper agents """
+from darts import TimeSeries
+from darts.models import Prophet
+from typing import Literal
+import numpy as np
+import pandas as pd
+        
 
 class StatAgent(AIAgent):
     def __init__(self, config, initial_token_balance, *args, steps_per_day=24, **kwargs) -> None:
@@ -11,6 +17,7 @@ class StatAgent(AIAgent):
 
         self.consumption_history = []
         self.production_history = []
+        self.dates = []
 
         self.steps_per_day = steps_per_day
         self._steps = 0
@@ -47,10 +54,17 @@ class StatAgent(AIAgent):
     def _get_charge(self):
         return sum([s.current_level for s in self.storages])
 
+    def _predict(self, col: Literal["consumption", "production"]) -> TimeSeries:
+        model = Prophet()
+        data = self.consumption_history if col == "consumption" else self.production_history
+        if len(data) <= 2:
+            return data[-1]
+        series = TimeSeries.from_times_and_values(pd.to_datetime(self.dates), np.array(data))
+        model.fit(series)
+        return model.predict(n=1).values()[0]
+
     def _predict_consumption_production(self, tod):
-        if len(self.consumption_history) < tod:
-            return self.consumption_history[-1], self.production_history[-1]
-        return np.mean(self.consumption_history[tod::self.steps_per_day]), np.mean(self.production_history[tod::self.steps_per_day])
+        return self._predict("consumption"), self._predict("production")
 
     def _update_peaks(self):
         if len(self.grid_prices) < self.steps_per_day:
@@ -94,6 +108,7 @@ class StatAgent(AIAgent):
     def step(self, consumption, production, date, grid_price, sell_price, p2p_base_price, min_price, mint_rate, burn_rate):
         self._register_grid_prices(grid_price, sell_price)
         self._register_consumption_production(consumption, production)
+        self.dates.append(date)
 
         tod = self._steps % self.steps_per_day
 
@@ -119,21 +134,8 @@ class StatAgent(AIAgent):
         predicted_grid_buy, predicted_grid_sell = self._predict_grid_prices(tod+1 % self.steps_per_day)
 
         if predicted_surplus < 0 and predicted_grid_buy > grid_price and self._get_charge() < -predicted_surplus:
+            self._charge_storages(-predicted_surplus - self._get_charge(), p2p_base_price)
             self._buy_from_grid(-predicted_surplus - self._get_charge(), grid_price, burn_rate)
-
-        if tod == self.prime_buy:
-            max_b = self._max_buy(grid_price)
-            reasonable = max_b*0.0
-
-            self._charge_storages(reasonable, p2p_base_price)
-            self._buy_from_grid(reasonable, grid_price, burn_rate)
-
-        elif tod == self.prime_sell:
-            able_to_sell = self._get_charge() + (predicted_surplus if predicted_surplus < 0 else 0)
-            reasonable_sell = 0.0*able_to_sell
-
-            self._discharge_storages(reasonable_sell, p2p_base_price)
-            self._sell_to_grid(reasonable_sell, sell_price, mint_rate)
 
         if self.token_balances['community'] < 0:
             raise ValueError("AAAAAAAAAA")
