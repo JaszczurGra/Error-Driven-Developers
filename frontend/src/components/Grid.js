@@ -10,9 +10,6 @@ import { useEffect } from 'react';
 
 
 export default function BasicTable({data}) {
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -28,8 +25,10 @@ export default function BasicTable({data}) {
           {data.map((row, index) => (
             <TableRow
               key={index}
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
+              sx={{
+                '&:last-child td, &:last-child th': { border: 0 },
+                backgroundColor: row.action === 'Sell' ? '#ffcbcb' : row.action === 'Buy' ? '#d6ffcb' : 'inherit',
+            }}            >
               <TableCell component="th" scope="row">
                 {row.action}
               </TableCell>

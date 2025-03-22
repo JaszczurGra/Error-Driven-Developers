@@ -1,7 +1,7 @@
 import { Box } from "@mui/material";
 import { Button } from "@mui/material";
 
-function Toolbar({startSimulation, stopSimulation, resetSimulation}) {
+function Toolbar({isSimulating, swapIsSimulation, resetSimulation}) {
     return (
         <Box sx={{ 
             position: 'fixed', 
@@ -17,27 +17,14 @@ function Toolbar({startSimulation, stopSimulation, resetSimulation}) {
             <Button 
                 variant="contained" 
                 sx={{ 
-                    backgroundColor: "rgb(48, 161, 226)", 
+                    backgroundColor: "rgb(48, 161, 226)",
                     borderRadius: '50%', 
                     width: '70px', 
                     height: '70px' 
                 }}
-                onClick={startSimulation}
+                onClick={swapIsSimulation}
             >
-                Start
-            </Button>
-            <Button 
-                variant="contained" 
-                sx={{ 
-                    backgroundColor: "white", 
-                    color: "rgb(48, 161, 226)", 
-                    borderRadius: '50%', 
-                    width: '70px', 
-                    height: '70px' 
-                }}
-                onClick={stopSimulation}
-            >
-                Stop
+                {isSimulating ? 'Pause' : 'Resume'}
             </Button>
             <Button 
                 variant="contained" 

@@ -26,7 +26,14 @@ function App() {
           const newData = simulation_data[newIndex];
           const newActions = actions_data.filter(action => action.time === newData.Time);
           if (newActions.length > 0) {
-            setActions(prevActions => [...newActions, ...prevActions]);
+            setActions(prevActions => {
+              const uniqueActions = newActions.filter(newAction => 
+                !prevActions.some(prevAction => 
+                  prevAction.time === newAction.time && prevAction.action === newAction.action
+                )
+              );
+              return [...uniqueActions, ...prevActions];
+            });
           }
           return [
             ...prevData,
@@ -39,17 +46,16 @@ function App() {
     return () => clearInterval(interval);
   }, [isSimulating, simulation_data]);
 
-
-  const startSimulation = () => setIsSimulating(true);
-  const stopSimulation = () => setIsSimulating(false);
+  const swapIsSimulation = () => setIsSimulating(() => !isSimulating);
   const resetSimulation = () => {
     setIsSimulating(true);
     setDataset([]);
+    setActions([]);
   };
 
   return (
     <div className="App">
-      <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2}}>
+      <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr'}}>
         <Box sx={{ display: 'grid',}}>
         <Graph 
             series = {[
@@ -108,7 +114,7 @@ function App() {
           <Grid data={actions}/>
         </Box>
       </Box>
-      <Toolbar startSimulation={startSimulation} stopSimulation={stopSimulation} resetSimulation={resetSimulation}/>
+      <Toolbar isSimulating={isSimulating} swapIsSimulation={swapIsSimulation} resetSimulation={resetSimulation}/>
     </div>
   );
 }

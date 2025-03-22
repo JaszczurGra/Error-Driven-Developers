@@ -1,6 +1,6 @@
 [
   {
-    "action": "Buy",
+    "action": "Sell",
     "quantity": 10,
     "price": 10,
     "time": "2023-06-01 01:00"
@@ -9,12 +9,36 @@
     "action": "Buy",
     "quantity": 10,
     "price": 10,
+    "time": "2023-06-01 03:00"
+  },
+  {
+    "action": "Sell",
+    "quantity": 10,
+    "price": 10,
     "time": "2023-06-01 05:00"
   },
   {
     "action": "Buy",
     "quantity": 10,
     "price": 10,
+    "time": "2023-06-01 06:00"
+  },
+  {
+    "action": "Sell",
+    "quantity": 10,
+    "price": 10,
+    "time": "2023-06-01 08:00"
+  },
+  {
+    "action": "Buy",
+    "quantity": 10,
+    "price": 10,
     "time": "2023-06-01 10:00"
+  },
+  {
+    "action": "Buy",
+    "quantity": 10,
+    "price": 10,
+    "time": "2023-06-01 11:00"
   }
 ]
