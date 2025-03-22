@@ -84,7 +84,8 @@ class SimEnv:
                 self.token_mint_rate,
                 self.token_burn_rate
                 ],
-                self._calc_reward(agent),
+               #TODO zkomentorzowane to 
+                # self._calc_reward(agent),
                 self._step_count >= self.max_steps
                 )
 

@@ -62,7 +62,6 @@ class Environment():
                 # TODO implement logic for combining outputs from agents
                 output = output_all[0]
 
-                print(output)
                 self.storage.set_frame(self.environment.storage.get("current_frame"), self.environment.storage.get("state")[self.environment.storage.get("current_frame")], output)
 
                 self.environment.storage.set("current_frame",self.environment.storage.get("current_frame") + 1)
