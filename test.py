@@ -11,7 +11,10 @@ agent = StatAgent({'storages': load_storages(simenv.storage_fp)}, 100)
 
 
 done = False
+i = 0
 while not done:
+    print(i)
+    i += 1
     state, done = simenv.step()
     agent.step(*state)
 
