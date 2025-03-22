@@ -1,70 +1,44 @@
 # Imports
-from uagents import Agent, Context, Bureau, Model
-import json
-from typing import List
+import time
 
-from model import ResponseAgent,ModelAgent
+from uagents import Agent, Context, Bureau
 
+from model import ResponseAgent, ModelAgent
 
 from simulation_compat_layer import QueryEnv, EnvAgent
 
-enviroment = Agent(seed="khavaioghgjabougrvbosubvisgvgjfkf", endpoint="https://localhost:4443")
 
+class Environment():
+    """ Environment """
 
-# List of agents 
-agents: List[Agent] = [ModelAgent().agent]
+    def __init__(self) -> None:
+        self.environment = Agent(seed="khavaioghgjabougrvbosubvisgvgjfkf", endpoint="https://localhost:4443")
+        self.agents: list[Agent] = [ModelAgent().agent]
+        self.simulation = EnvAgent().agent
+        self.simulation.endpoint = self.environment.address
+        self.bureau = Bureau()
+        self.bureau.add(self.environment)
+        self.bureau.add(self.simulation)
+        for agent in self.agents:
+            self.bureau.add(agent)
 
+        @self.environment.on_message(QueryEnv, replies=ResponseAgent)
+        async def receive_simulation(ctx: Context, _sender, message: QueryEnv):
+            for a in self.agents:
+                await ctx.send(a.address, message)
 
+        @self.environment.on_message(ResponseAgent)
+        async def receive_agent(ctx: Context, _sender, message):
 
+            print(ResponseAgent)
+            return
 
-simulation = EnvAgent().agent
-simulation.endpoint = enviroment.address
+    def run(self) -> None:
+        """ Runs the environment """
+        self.bureau.run()
 
-
-class FrontendMessage(Model):
-    bought = 0
-    sold = 0
-    # current/max
-    storage =[0,0]
-    # buy/sell 
-    price = [0,0]
-
-    
-
-# Values from simulation
-
-
-
-
-
-
-
-# Startup task
-@enviroment.on_message(QueryEnv, replies=ResponseAgent)
-async def receive_simulation(ctx: Context,_sender, message: QueryEnv):
-    for a in agents:
-        await ctx.send(a.address,message)
-    
-
-
-
-@enviroment.on_message(ResponseAgent)
-async def receive_agent(ctx: Context,_sender, message):
-
-    print(ResponseAgent)
-    return
-    ctx.storage.set('')
-
-
-
-
-
-bureau = Bureau()
-bureau.add(enviroment)
-bureau.add(simulation)  
-for a in agents:
-    bureau.add(a)
 
 # Run the agent
 if __name__ == "__main__":
-    bureau.run()
+    env = Environment()
+    env.run()
