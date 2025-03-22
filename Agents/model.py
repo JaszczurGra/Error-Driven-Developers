@@ -11,14 +11,16 @@ class ResponseAgent(Model):
 
 
 class ModelAgent():
-    def __init__(self) -> None:
-        agent = Agent(seed="khavaioghgjabougrvbosubvisgvgjfkf")
+    def __init__(self, agent_kwargs: dict) -> None:
+        agent = Agent(seed="khavaioghgjabougrvbosubvisgvgjfkf", **agent_kwargs)
+
+        async def logic(input: QueryEnv) -> ResponseAgent:
+            return ResponseAgent(sell=0, store=0, buy=0)
+
+        agent.logic = logic
 
         @agent.on_message(QueryEnv, replies=ResponseAgent)
         async def recieve_enviroment(ctx: Context, _sender, message: QueryEnv):
             await ctx.send(_sender, await agent.logic(message))
-
-        async def logic(input: QueryEnv) -> ResponseAgent:
-            await ResponseAgent(sell=0, store=0, buy=0)
 
         self.agent = agent

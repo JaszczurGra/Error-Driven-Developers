@@ -13,7 +13,7 @@ class Environment():
 
     def __init__(self) -> None:
         self.environment = Agent(seed="khavaioghgjabougrvbosubvisgvgjfkf", endpoint="https://localhost:4443")
-        self.agents: list[Agent] = [ModelAgent().agent]
+        self.agents: list[Agent] = [ModelAgent(agent_kwargs={'name': f'Agent_{i}'}).agent for i in range(3)]
         self.simulation = EnvAgent().agent
         self.simulation.endpoint = self.environment.address
         self.bureau = Bureau()
@@ -22,15 +22,16 @@ class Environment():
         for agent in self.agents:
             self.bureau.add(agent)
 
-        @self.environment.on_message(QueryEnv, replies=ResponseAgent)
+        @self.environment.on_message(QueryEnv)
         async def receive_simulation(ctx: Context, _sender, message: QueryEnv):
             for a in self.agents:
-                await ctx.send(a.address, message)
+                ctx.send(a.address, message)
+            return
 
         @self.environment.on_message(ResponseAgent)
         async def receive_agent(ctx: Context, _sender, message):
 
-            print(ResponseAgent)
+            print(message)
             return
 
     def run(self) -> None:
