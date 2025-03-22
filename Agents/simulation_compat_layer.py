@@ -2,6 +2,8 @@
 from uagents import Agent, Context
 from agents.data_models import QueryEnv
 
+from random import randint
+
 
 class EnvAgent():
     def __init__(self, address: str) -> None:

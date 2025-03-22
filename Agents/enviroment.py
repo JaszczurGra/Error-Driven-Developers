@@ -25,7 +25,7 @@ class Environment():
         self.environment.storage.set("agents_output", [])
         self.environment.storage.set("current_frame", 0)
 
-        self.agents: list[Agent] = [ModelAgent(agent_kwargs={'name': f'Agent_{i}'}).agent for i in range(3)]
+        self.agents: list[Agent] = [ModelAgent(agent_kwargs={'name': f'Agent_{i}'  }).agent for i in range(3)]
         self.simulation = EnvAgent(self.environment.address).agent
         self.bureau = Bureau()
         self.bureau.add(self.environment)

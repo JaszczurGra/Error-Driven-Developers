@@ -13,8 +13,8 @@ class ResponseAgent(Model):
 
 #Data from simulation
 class QueryEnv(Model):
-    production: int
-    consumption: int
+    # production: int
+    # consumption: int
     bought: int
     sold: int
     # current/max

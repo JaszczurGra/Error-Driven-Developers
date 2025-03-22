@@ -6,7 +6,7 @@ from agents.data_models import QueryEnv, ResponseAgent
 
 class ModelAgent():
     def __init__(self, agent_kwargs: dict) -> None:
-        agent = Agent(seed="wsadfad", **agent_kwargs)
+        agent = Agent( **agent_kwargs)
         agent.storage.set("frame", 0)
 
         @agent.on_message(QueryEnv, replies=ResponseAgent)
