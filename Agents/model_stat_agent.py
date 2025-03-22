@@ -21,21 +21,14 @@ class ModelStatAgent(ModelAgent):
         res = ResponseAgent()
 
         res.token_balance = self.model.token_balances['community']
-        # MOZNA
-        res.battery_charged = 0
-        # MOZNA
-        res.battery_discharged = 0
 
         res.battery_state = self.model._get_charge()
-
-
-
-        # TODO
         res.bought = self.model.buys_history[-1]
-        # TODO
         res.sold = self.model.sells_history[-1]
 
-        print("TYLE POWINNO BYC", input.production + res.bought - res.sold - input.consumption ) 
-
+        # print("TYLE POWINNO BYC", input.production + res.bought - res.sold - input.consumption ) 
+        # MOZNA dodac
+        res.battery_charged = 0
+        res.battery_discharged = 0
 
         return res
