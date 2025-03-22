@@ -7,6 +7,14 @@ import Overview from './components/Overview';
 import Grid from './components/Grid';
 import actions_data from "./const/actions_data.json";
 import { useEffect, useState } from 'react';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+
+const darkTheme = createTheme({
+  palette: {
+    mode: 'dark',
+  },
+});
 
 function App() {
   const [dataset, setDataset] = useState([]);
@@ -38,7 +46,7 @@ function App() {
             return prevData;
           }
           const newData = simulationData[newIndex];
-          const newActions = actions_data.filter(action => action.time === newData.Time);
+          const newActions = actions_data.filter(action => action.time === newData.time);
           if (newActions.length > 0) {
             setActions(prevActions => {
               const uniqueActions = newActions.filter(newAction => 
@@ -68,68 +76,82 @@ function App() {
   };
 
   return (
-    <div className="App">
-      <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr'}}>
-        <Box sx={{ display: 'grid',}}>
-        <Graph 
-            series = {[
-              {
-                id: 'Token Balance',
-                label: 'Token Balance',
-                dataKey: 'Token Balance',
-                showMark: false,
-              },
-            ]}
-            dataset = {dataset}
-        />
+    <ThemeProvider theme={darkTheme}>
+      <CssBaseline />
+      <div className="App">
+        <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr'}}>
+          <Box sx={{ display: 'grid',}}>
           <Graph 
-            series = {[
-              {
-                id: 'Purchase Price',
-                label: 'Purchase Price',
-                dataKey: 'Purchase Price',
-                showMark: false,
-              },
-              {
-                id: 'P2P Price',
-                label: 'P2P Price',
-                dataKey: 'P2P Price',
-                showMark: false,
-              },
-              {
-                id: 'Grid Price',
-                label: 'Grid Price',
-                dataKey: 'Grid Price',
-                showMark: false,
-              }
-            ]}
-            dataset = {dataset}
-        />
-        <Graph 
-            series = {[
-              {
-                id: 'Total Consumption',
-                label: 'Total Consumption',
-                dataKey: 'Total Consumption',
-                showMark: false,
-              },
-              {
-                id: 'Total Production',
-                label: 'Total Production',
-                dataKey: 'Total Production',
-                showMark: false,
-              },
-            ]}
-            dataset = {dataset}
-        />
-      </Box>
-        <Box>
-          <Overview/>
-          <Grid data={actions}/>
+              series = {[
+                {
+                  id: 'Token Balance',
+                  label: 'Token Balance',
+                  dataKey: 'token_balance',
+                  showMark: false,
+                },
+              ]}
+              dataset = {dataset}
+          />
+            <Graph 
+              series = {[
+                {
+                  id: 'Purchase Price',
+                  label: 'Purchase Price',
+                  dataKey: 'purchase_price',
+                  showMark: false,
+                },
+                {
+                  id: 'P2P Price',
+                  label: 'P2P Price',
+                  dataKey: 'p2p_price',
+                  showMark: false,
+                },
+                {
+                  id: 'Grid Price',
+                  label: 'Grid Price',
+                  dataKey: 'grid_price',
+                  showMark: false,
+                }
+              ]}
+              dataset = {dataset}
+          />
+          <Graph 
+              series = {[
+                {
+                  id: 'Total Consumption',
+                  label: 'Total Consumption',
+                  dataKey: 'total_consumption',
+                  showMark: false,
+                },
+                {
+                  id: 'Total Production',
+                  label: 'Total Production',
+                  dataKey: 'total_production',
+                  showMark: false,
+                },
+              ]}
+              dataset = {dataset}
+          />
+          <Graph 
+              series = {Object.keys(dataset[0] || {})
+                .filter(key => key.startsWith('storage_level'))
+                .map(key => ({
+                  id: key.replace(/_/g, ' ').replace(/\b\w/g, char => char.toUpperCase()),
+                  label: key.replace(/_/g, ' ').replace(/\b\w/g, char => char.toUpperCase()),
+                  dataKey: key,
+                  showMark: false,
+                }))}
+              dataset = {dataset}
+          />
         </Box>
-      </Box>
-      <Toolbar isSimulating={isSimulating} swapIsSimulation={swapIsSimulation} resetSimulation={resetSimulation}/>
-    </div>
+          <Box>
+            {/* <Overview/> */}
+            <Grid data={actions}/>
+          </Box>
+        </Box>
+        <Toolbar isSimulating={isSimulating} swapIsSimulation={swapIsSimulation} resetSimulation={resetSimulation}/>
+      </div>
+    </ThemeProvider>
   );
 }
 

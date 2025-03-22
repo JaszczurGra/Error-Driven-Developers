@@ -10,11 +10,40 @@ const Overview = () => {
     ];
 
     return (
-        <Box className="overview-container" sx={{display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 2, flexGrow: 1, alignItems:"center", justifyContent: "center"}}>
+        <Box 
+            className="overview-container" 
+            sx={{
+                display: 'grid', 
+                gridTemplateColumns: 'repeat(4, 1fr)', 
+                gap: 2, 
+                flexGrow: 1, 
+                alignItems: 'center', 
+                justifyContent: 'center'
+            }}
+        >
             {squares.map(square => (
-                <Paper key={square.id} sx={{height: "200px", aspectRatio: '1 / 1', backgroundColor: "rgba(159, 201, 226, 0.2)", display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', justifySelf: 'center' }}>
-                    <Typography variant="h4">{square.number}</Typography>
-                    <Typography variant="caption">{square.description}</Typography>
+                <Paper 
+                    key={square.id} 
+                    sx={{
+                        height: '200px', 
+                        aspectRatio: '1 / 1', 
+                        backgroundColor: 'rgba(159, 201, 226, 0.2)', 
+                        display: 'flex', 
+                        flexDirection: 'column', 
+                        justifyContent: 'center', 
+                        alignItems: 'center', 
+                        justifySelf: 'center',
+                        padding: 2,
+                        boxShadow: 3,
+                        borderRadius: 2
+                    }}
+                >
+                    <Typography variant="h4" sx={{ marginBottom: 1 }}>
+                        {square.number}
+                    </Typography>
+                    <Typography variant="caption">
+                        {square.description}
+                    </Typography>
                 </Paper>
             ))}
         </Box>

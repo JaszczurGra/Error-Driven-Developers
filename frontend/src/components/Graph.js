@@ -8,7 +8,7 @@ function Graph({ series, dataset }) {
                 xAxis = {[
                     {
                         id: 'Time',
-                        dataKey: 'Time',
+                        dataKey: 'time',
                         scaleType: 'band',
                         valueFormatter: (date) => {
                         const d = new Date(date);
@@ -23,8 +23,8 @@ function Graph({ series, dataset }) {
                     },
                 ]}
                 series={series}
-                width={900}
-                height={300}
+                width={1100}
+                height={220}
                 options={{
                     radius: 0,
                 }}
@@ -43,7 +43,8 @@ function Graph({ series, dataset }) {
                     }
                   }}
                   skipAnimation={true}
-                margin={{ bottom: 25, top: 20, right: 180 }}
+                margin={{ bottom: 25, top: 20, right: 180, left: 40 }}
+                grid={{ vertical: true, horizontal: true }}
             />
         </div>
     );

@@ -17,7 +17,7 @@ function Toolbar({isSimulating, swapIsSimulation, resetSimulation}) {
             <Button 
                 variant="contained" 
                 sx={{ 
-                    backgroundColor: "rgb(48, 161, 226)",
+                    backgroundColor: "rgb(0, 114, 180)",
                     borderRadius: '50%', 
                     width: '70px', 
                     height: '70px' 
@@ -29,8 +29,7 @@ function Toolbar({isSimulating, swapIsSimulation, resetSimulation}) {
             <Button 
                 variant="contained" 
                 sx={{ 
-                    backgroundColor: "white", 
-                    color: "rgb(219, 56, 15)", 
+                    backgroundColor: "rgb(167, 33, 0)",
                     borderRadius: '50%', 
                     width: '70px', 
                     height: '70px' 
