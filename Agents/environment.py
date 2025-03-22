@@ -8,12 +8,16 @@ from agents.simulation_compat_layer import EnvAgent
 
 
 from backend.storage import SIMULATION_STORAGE
-
+from backend.app import Server
 from pydantic import BaseModel
 class Environment():
     """ Environment """
 
     def __init__(self) -> None:
+        self.server = Server()
+        self.server.start()
+
+
         self.storage = SIMULATION_STORAGE
 
         self.environment = Agent(name='Environment', seed="asdfadsf",
@@ -33,6 +37,7 @@ class Environment():
         for agent in self.agents:
             self.bureau.add(agent)
 
+ 
         @self.environment.on_message(QueryEnv)
         async def receive_simulation(ctx: Context, _sender, message: QueryEnv):
             # print(message)
@@ -77,3 +82,4 @@ class Environment():
 if __name__ == "__main__":
     env = Environment()
     env.run()
+    env.server.stop()

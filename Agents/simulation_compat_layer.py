@@ -3,7 +3,7 @@ from uagents import Agent, Context
 from agents.data_models import QueryEnv
 
 from random import randint
-from simulation.simulation.simulation_env import SimEnv
+from simulation.env.simulation_env import SimEnv
 
 class EnvAgent():
     def __init__(self, address: str) -> None:
@@ -19,8 +19,7 @@ class EnvAgent():
             
 
 
-            step = self.simenv.step(None,None)
-
+            step = self.simenv.step()
             print(step)
             q = QueryEnv()
             q.consumption = step[0][0]

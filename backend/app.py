@@ -18,6 +18,11 @@ def api_get_stock_price():
     Retrieves all data from simulation.
     """
     length = len(SIMULATION_STORAGE.time)
+
+    print('SYMULACJA', length)
+    print({key: value[i] for key, value in SIMULATION_STORAGE.__dict__.items()} for i in range(length)) 
+
+
     return flask.jsonify([{key: value[i] for key, value in SIMULATION_STORAGE.__dict__.items()} for i in range(length)]), 200
 
 
