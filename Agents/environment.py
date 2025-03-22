@@ -34,8 +34,15 @@ class Environment():
         self.environment.storage.set("agents_output", [])
         self.environment.storage.set("current_frame", 0)
 
-        self.agents: list[Agent] = [ModelStatAgent(agent_kwargs={'name': f'Agent_{i}'  }).agent for i in range(1)]
-        self.simulation = EnvAgent(self.environment.address).agent
+
+        evntAgent = EnvAgent(self.environment.address)
+        self.simenv = evntAgent.simenv 
+        self.simulation = evntAgent.agent
+
+        self.agents: list[Agent] = [ModelStatAgent(self.simenv,agent_kwargs={'name': f'Agent_{i}'  }).agent for i in range(1)]
+
+        
+
         self.bureau = Bureau()
         self.bureau.add(self.environment)
         self.bureau.add(self.simulation)
