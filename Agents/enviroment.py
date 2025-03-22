@@ -12,7 +12,8 @@ class Environment():
     """ Environment """
 
     def __init__(self) -> None:
-        self.environment = Agent(seed="khavaioghgjabougrvbosubvisgvgjfkf", endpoint="https://localhost:4443")
+        self.environment = Agent(name='Environment', seed="khavaioghgjabougrvbosubvisgvgjfkf",
+                                 endpoint="https://localhost:4443")
         self.agents: list[Agent] = [ModelAgent(agent_kwargs={'name': f'Agent_{i}'}).agent for i in range(3)]
         self.simulation = EnvAgent().agent
         self.simulation.endpoint = self.environment.address
