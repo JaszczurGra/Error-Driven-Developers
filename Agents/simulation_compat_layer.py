@@ -16,7 +16,12 @@ class EnvAgent():
 
         @self.agent.on_interval(1, messages=QueryEnv)
         async def send_data(ctx: Context):
+            
+
+
             step = self.simenv.step(None,None)
+
+            print(step)
             q = QueryEnv()
             q.consumption = step[0][0]
             q.production = step[0][1]

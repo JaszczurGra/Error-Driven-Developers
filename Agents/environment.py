@@ -56,7 +56,6 @@ class Environment():
             
 
             if len(outputs[self.environment.storage.get("current_frame")]) == len(self.agents):
-                print(self.environment.storage.get("current_frame"), len( self.environment.storage.get("state")))
                 output_all = outputs[self.environment.storage.get("current_frame")]
 
                 # TODO implement logic for combining outputs from agents

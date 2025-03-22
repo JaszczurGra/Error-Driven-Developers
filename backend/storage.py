@@ -2,12 +2,11 @@
 from dataclasses import dataclass, field
 import pandas as pd
 from agents.data_models import QueryEnv,ResponseAgent
-
+import json
 
 @dataclass
 class Storage:
-    """ Storage for data """
-    time: list = field(default_factory=list)
+    time: list[str] = field(default_factory=list)
     total_consumption: list[float] = field(default_factory=list)
     total_production: list[float] = field(default_factory=list)
     token_balance: list[float] = field(default_factory=list)
@@ -18,6 +17,26 @@ class Storage:
     energy_surplus: list[float] = field(default_factory=list)
     storage_level_s1: list[float] = field(default_factory=list)
     storage_level_s2: list[float] = field(default_factory=list)
+    token_mint_rate: list[float] = field(default_factory=list)
+    token_burn_rate: list[float] = field(default_factory=list)
+    battery_charged: list[float] = field(default_factory=list)
+    battery_discharged: list[float] = field(default_factory=list)
+    battery_state: list[float] = field(default_factory=list)
+    bought: list[float] = field(default_factory=list)
+    sold: list[float] = field(default_factory=list)
+
+    """ Storage for data """
+    # time: list = field(default_factory=list)
+    # total_consumption: list[float] = field(default_factory=list)
+    # total_production: list[float] = field(default_factory=list)
+    # token_balance: list[float] = field(default_factory=list)
+    # p2p_price: list[float] = field(default_factory=list)
+    # grid_price: list[float] = field(default_factory=list)
+    # purchase_price: list[float] = field(default_factory=list)
+    # energy_deficit: list[float] = field(default_factory=list)
+    # energy_surplus: list[float] = field(default_factory=list)
+    # storage_level_s1: list[float] = field(default_factory=list)
+    # storage_level_s2: list[float] = field(default_factory=list)
 
     @classmethod
     def from_csv(cls, path: str) -> "Storage":
@@ -43,11 +62,31 @@ class Storage:
         self.storage_level_s1 = levels[0]
         self.storage_level_s2 = levels[1]
 
+        # self.storage_level 
+
 
     def set_frame(self, frame, env:QueryEnv,out: ResponseAgent):
-        
-        print ("\n\n\n\n" ,frame, env, out)
-        pass
+        env = json.loads(env)
+        out = json.loads(out)
+
+
+        self.total_consumption.append(env['consumption'])
+        self.total_production.append(env['production'])
+        self.time.append(env['date'])
+        self.grid_price.append(env['grid_price'])
+        self.purchase_price.append(env['sale_price'])
+        self.p2p_price.append(env['p2p_base_price'])
+        self.token_mint_rate.append(env['token_mint_rate'])
+        self.token_burn_rate.append(env['token_burn_rate'])
+
+        self.token_balance.append(out['token_balance'])
+        self.battery_charged.append(out['battery_charged'])
+        self.battery_discharged.append(out['battery_discharged'])
+        self.battery_state.append(out['battery_state'])
+        self.bought.append(out['bought'])
+        self.sold.append(out['sold'])
+
+        print("\n\n\n\n", frame, env, out)
 
 
 
