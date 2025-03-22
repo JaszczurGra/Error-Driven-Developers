@@ -10,5 +10,4 @@ class EnvAgent():
 
         @self.agent.on_interval(1, messages=QueryEnv)
         async def send_data(ctx: Context):
-            print(ctx)
             await ctx.send(self.address, QueryEnv(bought=0, sold=0, storage=[0, 0], price=[0, 0]))

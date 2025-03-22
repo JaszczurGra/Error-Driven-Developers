@@ -9,24 +9,22 @@ from agents.simulation_compat_layer import EnvAgent
 
 from backend.storage import SIMULATION_STORAGE
 
-
+from pydantic import BaseModel
 class Environment():
     """ Environment """
 
     def __init__(self) -> None:
         self.storage = SIMULATION_STORAGE
 
-        self.environment = Agent(name='Environment', seed="aaaaaaaaa",
+        self.environment = Agent(name='Environment', seed="asdfadsf",
                                  endpoint="https://localhost:4443")
         # self.environment.storage.set("frame_counter", [0])
 
-        self.state = []
-        self.agents_output = []
-        self.outputs = []
-        self.current_frame = 0
 
-        # self.environment.storage.set('state', [])
-        # self.environment.storage.set("agents_output", [])
+        self.environment.storage.set("state", [])
+        self.environment.storage.set("agents_output", [])
+        self.environment.storage.set("current_frame", 0)
+
         self.agents: list[Agent] = [ModelAgent(agent_kwargs={'name': f'Agent_{i}'}).agent for i in range(3)]
         self.simulation = EnvAgent(self.environment.address).agent
         self.bureau = Bureau()
@@ -37,33 +35,38 @@ class Environment():
 
         @self.environment.on_message(QueryEnv)
         async def receive_simulation(ctx: Context, _sender, message: QueryEnv):
-            print(message)
+            # print(message)
 
-            self.state.append(message)
+            self.environment.storage.set("state",self.environment.storage.get("state") + [message.json()])
             # self.environment.storage.set("agents_output", self.environment.storage.get("agents_output") + [])
 
             for a in self.agents:
                 await ctx.send(a.address, message)
 
         @self.environment.on_message(ResponseAgent)
-        async def receive_agent(ctx: Context, _sender, message):
-            print(message)
-            received_frame = message.frame
-            # just to be safe could be in recieve simulation as it shouldn't exceed the nr of simulation frames
-            while len(self.outputs) < received_frame+1:
-                self.outputs.append([])
+        async def receive_agent(ctx: Context, _sender, message:ResponseAgent):
+            received_frame = message.frame 
+            #just to be safe could be in recieve simulation as it shouldn't exceed the nr of simulation frames  
+            outputs = self.environment.storage.get('agents_output')
+            while len(outputs) < received_frame+1:
+                outputs.append([])  
 
-            self.outputs[received_frame].append(message)
 
-            if self.outputs[self.current_frame] == len(self.agents):
-                self.current_frame += 1
+            outputs[received_frame].append(message.json()) 
+            
 
-                output_all = self.outputs[self.current_frame]
+            if len(outputs[self.environment.storage.get("current_frame")]) == len(self.agents):
+                print(self.environment.storage.get("current_frame"), len( self.environment.storage.get("state")))
+                output_all = outputs[self.environment.storage.get("current_frame")]
 
                 # TODO implement logic for combining outputs from agents
                 output = output_all[0]
 
-                self.storage.set_frame(self.current_frame, self.state[self.current_frame], output)
+                print(output)
+                self.storage.set_frame(self.environment.storage.get("current_frame"), self.environment.storage.get("state")[self.environment.storage.get("current_frame")], output)
+
+                self.environment.storage.set("current_frame",self.environment.storage.get("current_frame") + 1)
+                self.environment.storage.set("agents_output", outputs)
 
             return
 

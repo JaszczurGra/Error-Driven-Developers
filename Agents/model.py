@@ -11,7 +11,7 @@ class ModelAgent():
 
         @agent.on_message(QueryEnv, replies=ResponseAgent)
         async def recieve_enviroment(ctx: Context, _sender, message: QueryEnv):
-            print(ctx, _sender, message)
+            # print(ctx, _sender, message)
             response = self.logic(message)
             response.frame = agent.storage.get("frame")
             agent.storage.set("frame", response.frame+1)
