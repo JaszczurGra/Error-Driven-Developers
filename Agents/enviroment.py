@@ -17,10 +17,16 @@ class Environment():
         self.storage = SIMULATION_STORAGE
 
 
-        self.environment = Agent(name='Environment', seed="khavaioghgjabougrvbosubvisgvgjfkf",
+        self.environment = Agent(name='Environment', seed="aaaaaaaaa",
                                  endpoint="https://localhost:4443")
-        self.environment.storage.set("frame_counter", [0])
-        self.environment.storage.set('state', [])
+        # self.environment.storage.set("frame_counter", [0])
+
+        self.state = []
+        self.agents_output =[]
+        self.current_frame = 0
+
+        # self.environment.storage.set('state', [])
+        # self.environment.storage.set("agents_output", [])
         self.agents: list[Agent] = [ModelAgent(agent_kwargs={'name': f'Agent_{i}'}).agent for i in range(3)]
         self.simulation = EnvAgent().agent
         self.simulation.endpoint = self.environment.address
@@ -32,31 +38,40 @@ class Environment():
 
         @self.environment.on_message(QueryEnv)
         async def receive_simulation(ctx: Context, _sender, message: QueryEnv):
-            # for a in self.agents:
-            #     await ctx.send(a.address, message)
+            print(message)
             
-            #Update storage
+            self.state.append(message)  
+            # self.environment.storage.set("agents_output", self.environment.storage.get("agents_output") + [])
             
-            pass
-            
+            for a in self.agents:
+                await ctx.send(a.address, message)
+
+
 
         @self.environment.on_message(ResponseAgent)
         async def receive_agent(ctx: Context, _sender, message):
             print(message)
-            received_frame = message.frame
-            counter = self.environment.storage.get("frame_counter")
-            while len(counter) <= received_frame:
-                counter.append(0)
-            counter[received_frame] += 1    
-
-            current_frame = self.environment.storage.get("current_frame")   
-            if counter[current_frame] == len(self.agents):
-                print('Updatuj stan ', current_frame)
-                self.environment.storage.set("current_frame", current_frame+1)
+            received_frame = message.frame 
+            #just to be safe could be in recieve simulation as it shouldn't exceed the nr of simulation frames  
+            while len(self.outputs) < received_frame+1:
+                self.outputs.append([])  
+            
+            self.outputs[received_frame].append(message)
 
 
 
-            self.environment.storage.set("frame_counter", counter)
+             
+            if self.outputs[self.current_frame] == len(self.agents):
+                self.current_frame += 1
+                
+                output_all = self.outputs[self.current_frame]
+
+                # TODO implement logic for combining outputs from agents
+                output = output_all[0]
+
+                self.storage.set_frame(self.current_frame, self.state[self.current_frame], output)
+
+
 
             return
 

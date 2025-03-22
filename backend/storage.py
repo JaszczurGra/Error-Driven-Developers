@@ -1,6 +1,7 @@
 """ Storage of simulation data """
 from dataclasses import dataclass, field
 import pandas as pd
+from agents.data_models import QueryEnv,ResponseAgent
 
 
 @dataclass
@@ -43,6 +44,13 @@ class Storage:
         self.storage_level_s2 = levels[1]
 
 
-RANDOM_STORAGE = Storage.from_csv('example_data.csv')
-SIMULATION_STORAGE = RANDOM_STORAGE
+    def set_frame(self, frame, env:QueryEnv,out: ResponseAgent):
+        
+        print ("\n\n\n\n" ,frame, env, out)
+        pass
+
+
+
+# RANDOM_STORAGE = Storage.from_csv('example_data.csv')
+# SIMULATION_STORAGE = RANDOM_STORAGE
 SIMULATION_STORAGE = Storage()

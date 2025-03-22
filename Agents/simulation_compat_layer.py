@@ -4,7 +4,7 @@ from agents.data_models import QueryEnv
 
 
 class EnvAgent():
-    agent = Agent(name='Simulation', seed="khavaioghgjabougrvbosubvisgvgjfkf", endpoint="None")
+    agent = Agent(name='Simulation', seed="khavaioghgjabougrvbosubvisgvgjfkj")
 
     @agent.on_interval(1, messages=QueryEnv)
     async def send_data(ctx: Context):
