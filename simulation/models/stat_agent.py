@@ -125,15 +125,15 @@ class StatAgent(AIAgent):
         predicted_surplus = predicted_prod - predicted_cons
 
         if surplus < 0:
-            self.token_balances['community'] += (consumption-production)*mint_rate
+            self.token_balances['community'] += (production)*mint_rate
             rest = self._discharge_storages(-surplus, p2p_base_price)
             if rest > 0:
                 self._buy_from_grid(rest, grid_price, burn_rate)
         else:
             self.token_balances['community'] += (consumption)*mint_rate
-            charge = min((-predicted_surplus if predicted_surplus < 0 else surplus/4), surplus)
-            rest = self._charge_storages(charge, p2p_base_price)
-            sell = surplus-charge + rest
+            rest = self._charge_storages(surplus, p2p_base_price)
+            self.token_balances['community'] += (surplus-rest) * mint_rate
+            sell = rest
             if sell > 0:
                 self._sell_to_grid(sell, sell_price, mint_rate)
 
