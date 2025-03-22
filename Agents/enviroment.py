@@ -12,7 +12,7 @@ enviroment = Agent(seed="khavaioghgjabougrvbosubvisgvgjfkf", endpoint="https://l
 
 
 # List of agents 
-agents: List[Agent] = [ModelAgent().agent]
+agents: List[Agent] = [ModelAgent().agent for i in range(5)]
 
 
 
@@ -31,27 +31,22 @@ class FrontendMessage(Model):
 
     
 
-# Values from simulation
 
 
-
-
-
-
-
-# Startup task
-@enviroment.on_message(QueryEnv, replies=ResponseAgent)
+@enviroment.on_message(QueryEnv)
 async def receive_simulation(ctx: Context,_sender, message: QueryEnv):
     for a in agents:
-        await ctx.send(a.address,message)
+        ctx.send(a.address,message)
+
+    return 
     
 
 
 
 @enviroment.on_message(ResponseAgent)
-async def receive_agent(ctx: Context,_sender, message):
+async def receive_agent(ctx: Context,_sender, message:ResponseAgent):
 
-    print(ResponseAgent)
+    print(message)
     return
     ctx.storage.set('')
 

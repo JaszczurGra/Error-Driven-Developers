@@ -9,16 +9,26 @@ class ResponseAgent(Model):
     buy = 0
 
 class ModelAgent():
-    agent = Agent(seed="khavaioghgjabougrvbosubvisgvgjfkf")
+    def __init__(self):
+        
+        agent = Agent(seed="khavaioghgjabougrvbosubvisgvgjfkf")
+
+
+        async def logic(input: QueryEnv) -> ResponseAgent:
+            return ResponseAgent(sell=0,store=0,buy=0)
+
+
+        agent.logic = logic
+
+        @agent.on_message(QueryEnv,replies=ResponseAgent)
+        async def recieve_enviroment(ctx: Context, _sender, message: QueryEnv):
+            response = await agent.logic(message) 
+            print(response)
+            await ctx.send(_sender, response)
 
 
 
-    @agent.on_message(QueryEnv,replies=ResponseAgent)
-    async def recieve_enviroment(ctx: Context, _sender, message: QueryEnv):
-        await ctx.send(_sender,await ModelAgent.logic(message))
-
-
-    async def logic(input: QueryEnv) -> ResponseAgent:
-        await ResponseAgent(sell=0,store=0,buy=0)
+        
+        self.agent = agent
 
 
