@@ -3,6 +3,7 @@ from uagents import Agent, Context, Bureau
 
 from agents.data_models import QueryEnv, ResponseAgent
 from agents.model import ModelAgent
+from agents.model_stat_agent import ModelStatAgent
 
 from agents.simulation_compat_layer import EnvAgent
 
@@ -14,8 +15,10 @@ class Environment():
     """ Environment """
 
     def __init__(self) -> None:
-        self.server = Server()
-        self.server.start()
+
+        if False:
+            self.server = Server()
+            self.server.start()
 
 
         self.storage = SIMULATION_STORAGE
@@ -29,7 +32,7 @@ class Environment():
         self.environment.storage.set("agents_output", [])
         self.environment.storage.set("current_frame", 0)
 
-        self.agents: list[Agent] = [ModelAgent(agent_kwargs={'name': f'Agent_{i}'  }).agent for i in range(3)]
+        self.agents: list[Agent] = [ModelStatAgent(agent_kwargs={'name': f'Agent_{i}'  }).agent for i in range(1)]
         self.simulation = EnvAgent(self.environment.address).agent
         self.bureau = Bureau()
         self.bureau.add(self.environment)
