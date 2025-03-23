@@ -8,3 +8,8 @@ Hackaton Tech of Tomorrow 2025
 ### Branches
 - `main`: presentation material
 - `quantum_main`: additional quantum agent
+
+
+### Launch instructions
+- **Frontend**: `npm start` in `<project_dir>/frontend`
+- **Backend + logic**: `python -m agents.environment` (to launch web backend set `run_server=True` inside `<project_dir>/agents/environment.py`
