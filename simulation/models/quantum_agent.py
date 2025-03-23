@@ -7,7 +7,7 @@ from qiskit_machine_learning.algorithms import NeuralNetworkRegressor
 from sklearn.preprocessing import MinMaxScaler
 from .stat_agent import StatAgent
 
-with open('quantum_model', 'rb') as f:
+with open('quantum_model.dill', 'rb') as f:
     QUANTUM_MODEL, SCALER = dill.load(f)
     QUANTUM_MODEL: NeuralNetworkRegressor
     SCALER: MinMaxScaler

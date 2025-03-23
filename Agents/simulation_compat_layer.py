@@ -14,12 +14,12 @@ class EnvAgent():
 
         self.simenv = SimEnv(storage_fp, profile_fp, logs_fp, grid_costs_fp)
 
-        @self.agent.on_interval(0.01, messages=QueryEnv)
+        @self.agent.on_interval(0.0001, messages=QueryEnv)
         async def send_data(ctx: Context):
-            
-
-
-            step = self.simenv.step()
+            try:
+                step = self.simenv.step()
+            except:
+                return
             print(step)
             q = QueryEnv()
             q.consumption = step[0][0]

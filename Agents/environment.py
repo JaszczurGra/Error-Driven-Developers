@@ -4,12 +4,15 @@ from uagents import Agent, Context, Bureau
 from agents.data_models import QueryEnv, ResponseAgent
 from agents.model import ModelAgent
 from agents.model_stat_agent import ModelStatAgent
+from agents.model_quantum_agent import ModelQuantumAgent
 
 from agents.simulation_compat_layer import EnvAgent
 
 
 from backend.storage import SIMULATION_STORAGE
 from backend.app import Server
+
+
 
 import json
 
@@ -41,7 +44,20 @@ class Environment():
         self.simulation = evntAgent.agent
 
         #Possible implementation of multiple independant models 
-        self.agents: list[Agent] = [ModelStatAgent(self.simenv,agent_kwargs={'name': f'Agent_{i}'  }).agent for i in range(1)]
+        #TODO swtichback
+     
+
+        #Dummy
+        # self.agents: list[Agent] = [ModelAgent(agent_kwargs={'name': f'Agent_{i}'  }).agent for i in range(1)]
+
+
+        #Stat
+        # self.agents: list[Agent] = [ModelStatAgent(self.simenv, agent_kwargs={'name': f'Agent_{i}'  }).agent for i in range(1)]
+
+
+        #Quantum
+        self.agents: list[Agent] = [ModelQuantumAgent(self.simenv, agent_kwargs={'name': f'Agent_{i}'  }).agent for i in range(1)]
+
 
         
 
