@@ -11,6 +11,7 @@ from agents.simulation_compat_layer import EnvAgent
 from backend.storage import SIMULATION_STORAGE
 from backend.app import Server
 
+import json
 
 run_server = False
 class Environment():
@@ -39,7 +40,7 @@ class Environment():
         self.simenv = evntAgent.simenv 
         self.simulation = evntAgent.agent
 
-        self.agents: list[Agent] = [ModelStatAgent(self.simenv,agent_kwargs={'name': f'Agent_{i}'  }).agent for i in range(1)]
+        self.agents: list[Agent] = [ModelStatAgent(self.simenv,agent_kwargs={'name': f'Agent_{i}'  }).agent for i in range(3)]
 
         
 
