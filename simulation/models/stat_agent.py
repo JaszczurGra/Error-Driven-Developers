@@ -123,7 +123,7 @@ class StatAgent(AIAgent):
         else:
             self.token_balances['community'] += (consumption)*mint_rate
             rest = self._charge_storages(surplus, p2p_base_price)
-            self.token_balances['community'] += (surplus-rest) * mint_rate
+            # self.token_balances['community'] += (surplus-rest) * mint_rate
             sell = rest
             if sell > 0:
                 self._sell_to_grid(sell, sell_price, mint_rate)
