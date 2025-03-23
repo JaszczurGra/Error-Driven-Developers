@@ -57,6 +57,7 @@ class Cooperative:
                 self.community_token_balance += minted_tokens
             for storage in self.storages:
                 charged_energy = storage.charge(net_energy)
+                self.token_balances['community'] += charged_energy*token_mint_rate
                 net_energy -= charged_energy
                 if charged_energy > 0:
                     tokens_used_for_storage += charged_energy * p2p_base_price
@@ -80,7 +81,7 @@ class Cooperative:
         elif net_energy < 0:
             if consumption > 0:
                 # Mint tokens for the community based on the consumption of renevable energy
-                minted_tokens = (consumption - production) * token_mint_rate
+                minted_tokens = (production) * token_mint_rate
                 self.community_token_balance += minted_tokens
             for storage in self.storages:
                 discharged_energy = storage.discharge(-net_energy)

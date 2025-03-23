@@ -31,6 +31,9 @@ class StatAgent(AIAgent):
         self.sells_history = []
         self.buys_history = []
 
+        self.consumption_model = Prophet()
+        self.production_model = Prophet()
+
         super().__init__(config, initial_token_balance, *args, **kwargs)
 
     def _register_grid_prices(self, buy, sell):
@@ -56,25 +59,17 @@ class StatAgent(AIAgent):
     def _get_charge(self):
         return sum([s.current_level for s in self.storages])
 
-    def _predict(self, col: Literal["consumption", "production"]) -> TimeSeries:
-        model = Prophet()
+    def _predict(self, col: Literal["consumption", "production"], n) -> np.ndarray:
+        model = self.consumption_model if col == 'consumption' else self.production_model
         data = self.consumption_history if col == "consumption" else self.production_history
         if len(data) <= 2:
-            return data[-1]
-        series = TimeSeries.from_times_and_values(pd.to_datetime(self.dates), np.array(data))
+            return np.array([data[-1]])
+        series = TimeSeries.from_times_and_values(pd.to_datetime(self.dates), np.array(data))[-24:]
         model.fit(series)
-        return model.predict(n=1).values()[0][0]
+        return np.array(model.predict(n=n).values())
 
-    def _predict_consumption_production(self, tod):
-        return self._predict("consumption"), self._predict("production")
-
-    def _update_peaks(self):
-        if len(self.grid_prices) < self.steps_per_day:
-            return
-        buys, sells = zip(*self.grid_prices)
-
-        self.prime_buy = np.argmin(buys)
-        self.prime_sell = np.argmax(sells)
+    def _predict_consumption_production(self, n):
+        return self._predict("consumption", n), self._predict("production", n)
 
     def _charge_storages(self, amount, p2p_base) -> float:
         for storage in self.storages:
@@ -106,8 +101,8 @@ class StatAgent(AIAgent):
         self.token_balances['community'] -= amount * burn_rate
         self.token_balances['community'] -= amount * grid_price
 
-    def _max_buy(self, grid_price) -> float:
-        return self.token_balances['community']/grid_price
+    def _max_buy(self, grid_price, burn_rate) -> float:
+        return self.token_balances['community']/(grid_price + burn_rate)
 
     def step(self, consumption, production, date, grid_price, sell_price, p2p_base_price, min_price, mint_rate, burn_rate):
         self.sells_history.append(0)
@@ -119,10 +114,6 @@ class StatAgent(AIAgent):
         tod = self._steps % self.steps_per_day
 
         surplus = production - consumption
-
-        predicted_cons, predicted_prod = self._predict_consumption_production(tod+1 % self.steps_per_day)
-
-        predicted_surplus = predicted_prod - predicted_cons
 
         if surplus < 0:
             self.token_balances['community'] += (production)*mint_rate
@@ -137,18 +128,29 @@ class StatAgent(AIAgent):
             if sell > 0:
                 self._sell_to_grid(sell, sell_price, mint_rate)
 
-        predicted_grid_buy, predicted_grid_sell = self._predict_grid_prices(tod+1 % self.steps_per_day)
+        predicted_cons, predicted_prod = self._predict_consumption_production(1)
 
-        if predicted_surplus < 0 and predicted_grid_buy > grid_price and self._get_charge() < -predicted_surplus:
-            self._charge_storages(-predicted_surplus - self._get_charge(), p2p_base_price)
-            self._buy_from_grid(-predicted_surplus - self._get_charge(), grid_price, burn_rate)
+        # predicted_surplus = predicted_prod - predicted_cons
+        predicted_surpluses = predicted_prod-predicted_cons
+
+        for i, predicted_surplus in enumerate(predicted_surpluses):
+            if isinstance(predicted_surplus, np.ndarray):
+                predicted_surplus = predicted_surplus[0]
+            if predicted_surplus > 0:
+                break
+            predicted_grid_buy, predicted_grid_sell = self._predict_grid_prices(tod+1+i % self.steps_per_day)
+
+            if predicted_surplus < 0 and predicted_grid_buy > grid_price and self._get_charge() < -predicted_surplus:
+                charge = min(-predicted_surplus, self._max_buy(grid_price, burn_rate))
+                self._charge_storages(-predicted_surplus - self._get_charge(), p2p_base_price)
+                self._buy_from_grid(-predicted_surplus - self._get_charge(), grid_price, burn_rate)
 
         if self.token_balances['community'] < 0:
-            raise ValueError("AAAAAAAAAA")
+            raise ValueError("Community without power... No 'Świat Według Kiepskich' on TV... All hope is lost...")
 
-        self._update_peaks()
         self._log_history(surplus)
         self._steps += 1
+        print(self.token_balances)
 
     def plot(self):
         sns.lineplot(self.tokens_history)
